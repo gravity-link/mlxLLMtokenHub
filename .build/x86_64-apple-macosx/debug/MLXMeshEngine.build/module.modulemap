@@ -1,4 +1,0 @@
-module MLXMeshEngine {
-    header "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshEngine.build/MLXMeshEngine-Swift.h"
-    requires objc
-}
