@@ -1,0 +1,4 @@
+module MLXMeshNetworking {
+    header "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/MLXMeshNetworking-Swift.h"
+    requires objc
+}

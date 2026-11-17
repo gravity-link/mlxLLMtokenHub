@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  mlxmesh-relay:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mlxmesh-relay:latest
+    container_name: mlxmesh-relay
+    restart: always
+    ports:
+      - "4001:4001/udp"
+      - "4001:4001/tcp"
+      - "8088:8088/tcp"
+    volumes:
+      - /opt/mlxmesh/data:/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"

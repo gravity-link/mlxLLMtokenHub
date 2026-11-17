@@ -1,0 +1,35 @@
+{
+  "": {
+    "swift-dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/master.swiftdeps"
+  },
+  "/Users/henryluo/src/mlxLLM/Sources/MLXMeshCore/DeviceProfile.swift": {
+    "dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/DeviceProfile.d",
+    "object": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/DeviceProfile.swift.o",
+    "swiftmodule": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/DeviceProfile~partial.swiftmodule",
+    "swift-dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/DeviceProfile.swiftdeps"
+  },
+  "/Users/henryluo/src/mlxLLM/Sources/MLXMeshCore/MeshProtocol.swift": {
+    "dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/MeshProtocol.d",
+    "object": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/MeshProtocol.swift.o",
+    "swiftmodule": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/MeshProtocol~partial.swiftmodule",
+    "swift-dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/MeshProtocol.swiftdeps"
+  },
+  "/Users/henryluo/src/mlxLLM/Sources/MLXMeshCore/Quantization/CompressedPayload.swift": {
+    "dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/CompressedPayload.d",
+    "object": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/CompressedPayload.swift.o",
+    "swiftmodule": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/CompressedPayload~partial.swiftmodule",
+    "swift-dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/CompressedPayload.swiftdeps"
+  },
+  "/Users/henryluo/src/mlxLLM/Sources/MLXMeshCore/Quantization/CompressionEngine.swift": {
+    "dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/CompressionEngine.d",
+    "object": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/CompressionEngine.swift.o",
+    "swiftmodule": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/CompressionEngine~partial.swiftmodule",
+    "swift-dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/CompressionEngine.swiftdeps"
+  },
+  "/Users/henryluo/src/mlxLLM/Sources/MLXMeshCore/RoleAssignment.swift": {
+    "dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/RoleAssignment.d",
+    "object": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/RoleAssignment.swift.o",
+    "swiftmodule": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/RoleAssignment~partial.swiftmodule",
+    "swift-dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/RoleAssignment.swiftdeps"
+  }
+}

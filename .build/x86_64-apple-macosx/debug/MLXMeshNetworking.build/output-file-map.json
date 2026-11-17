@@ -1,0 +1,35 @@
+{
+  "": {
+    "swift-dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/master.swiftdeps"
+  },
+  "/Users/henryluo/src/mlxLLM/Sources/MLXMeshNetworking/MeshDiscovery.swift": {
+    "dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/MeshDiscovery.d",
+    "object": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/MeshDiscovery.swift.o",
+    "swiftmodule": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/MeshDiscovery~partial.swiftmodule",
+    "swift-dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/MeshDiscovery.swiftdeps"
+  },
+  "/Users/henryluo/src/mlxLLM/Sources/MLXMeshNetworking/Multiaddr.swift": {
+    "dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/Multiaddr.d",
+    "object": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/Multiaddr.swift.o",
+    "swiftmodule": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/Multiaddr~partial.swiftmodule",
+    "swift-dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/Multiaddr.swiftdeps"
+  },
+  "/Users/henryluo/src/mlxLLM/Sources/MLXMeshNetworking/PeerNode.swift": {
+    "dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/PeerNode.d",
+    "object": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/PeerNode.swift.o",
+    "swiftmodule": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/PeerNode~partial.swiftmodule",
+    "swift-dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/PeerNode.swiftdeps"
+  },
+  "/Users/henryluo/src/mlxLLM/Sources/MLXMeshNetworking/QUICMeshTransport.swift": {
+    "dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/QUICMeshTransport.d",
+    "object": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/QUICMeshTransport.swift.o",
+    "swiftmodule": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/QUICMeshTransport~partial.swiftmodule",
+    "swift-dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/QUICMeshTransport.swiftdeps"
+  },
+  "/Users/henryluo/src/mlxLLM/Sources/MLXMeshNetworking/RelayClient.swift": {
+    "dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/RelayClient.d",
+    "object": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/RelayClient.swift.o",
+    "swiftmodule": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/RelayClient~partial.swiftmodule",
+    "swift-dependencies": "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/RelayClient.swiftdeps"
+  }
+}

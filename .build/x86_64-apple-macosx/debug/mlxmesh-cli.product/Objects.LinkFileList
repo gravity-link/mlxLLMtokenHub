@@ -1,0 +1,17 @@
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCLI.build/main.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/CompressedPayload.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/CompressionEngine.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/DeviceProfile.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/MeshProtocol.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshCore.build/RoleAssignment.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshEngine.build/AsymmetricPipeline.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshEngine.build/DrafterNode.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshEngine.build/KVCacheManager.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshEngine.build/Sampling.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshEngine.build/SpeculativeEngine.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshEngine.build/VerifierNode.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/MeshDiscovery.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/Multiaddr.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/PeerNode.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/QUICMeshTransport.swift.o
+/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshNetworking.build/RelayClient.swift.o

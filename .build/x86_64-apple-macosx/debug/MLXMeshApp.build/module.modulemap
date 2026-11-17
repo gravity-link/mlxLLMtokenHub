@@ -1,0 +1,4 @@
+module MLXMeshApp {
+    header "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/MLXMeshApp.build/MLXMeshApp-Swift.h"
+    requires objc
+}

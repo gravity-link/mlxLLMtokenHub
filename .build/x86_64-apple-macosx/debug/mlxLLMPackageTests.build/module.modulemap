@@ -1,0 +1,4 @@
+module mlxLLMPackageTests {
+    header "/Users/henryluo/src/mlxLLM/.build/x86_64-apple-macosx/debug/mlxLLMPackageTests.build/mlxLLMPackageTests-Swift.h"
+    requires objc
+}
