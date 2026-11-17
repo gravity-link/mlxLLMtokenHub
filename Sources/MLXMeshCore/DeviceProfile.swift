@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// Represents the detected Apple Silicon chip architecture
 public enum AppleSiliconChip: String, Codable, Sendable {
@@ -83,8 +86,13 @@ public struct DeviceProfile: Codable, Sendable {
         let assignedTotalMem = totalMemoryGB ?? DeviceProfile.detectTotalMemoryGB()
         let assignedThermal = thermalState ?? DeviceProfile.currentThermalStateString()
 
+        #if canImport(UIKit)
+        let defaultName = UIDevice.current.name
+        #else
+        let defaultName = Host.current().localizedName ?? "Apple Device"
+        #endif
         self.deviceId = deviceId ?? UUID().uuidString
-        self.deviceName = deviceName ?? (Host.current().localizedName ?? "Apple Device")
+        self.deviceName = deviceName ?? defaultName
         self.chip = assignedChip
         self.cpuCores = cpuCores ?? ProcessInfo.processInfo.activeProcessorCount
         self.totalMemoryGB = assignedTotalMem
