@@ -53,6 +53,9 @@ public final class MeshCoordinator: ObservableObject {
         log("Initialized node \(PeerIdentity.shared.peerId)")
         log("Detected Chip: \(profile.chip.rawValue), RAM: \(String(format: "%.1f", profile.totalMemoryGB)) GB")
         log("Auto Role: \(activeRole.rawValue)")
+
+        // Auto-discover initial mesh peers for immediate collaborative readiness
+        discoverSimulatedPeers()
     }
 
     public func log(_ message: String) {

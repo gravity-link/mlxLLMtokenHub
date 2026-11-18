@@ -27,6 +27,11 @@ public struct DashboardView: View {
                 }
                 .padding()
             }
+            .task {
+                if !coordinator.isConnectedToBootstrap {
+                    await coordinator.toggleMeshConnection()
+                }
+            }
             .navigationTitle("mlxLLM Compute Node")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
