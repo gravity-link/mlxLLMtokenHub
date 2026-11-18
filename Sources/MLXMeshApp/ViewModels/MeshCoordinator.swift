@@ -177,9 +177,8 @@ public final class MeshCoordinator: ObservableObject {
             temperature: 0.7,
             wanLatencyMs: connectedPeers.first?.latencyMs ?? 45.0,
             compressionMode: compressionMode
-        ) { [weak self] tokenId, tokenStr in
+        ) { [weak self] tokenId, tokenStr, isBonus in
             Task { @MainActor in
-                let isBonus = (self?.generatedTokens.count ?? 0) % 4 == 3
                 let token = EmittedToken(
                     text: tokenStr,
                     isDraftAccepted: !isBonus,

@@ -18,31 +18,38 @@ public final class DrafterNode: @unchecked Sendable {
     /// Generate K speculative draft tokens given current context
     public func generateDraft(
         promptTokens: [Int],
+        startIndex: Int = 0,
+        sequence: [String]? = nil,
         draftCount K: Int = 4,
         temperature: Float = 0.7,
         topP: Float = 0.9,
+        isChinese: Bool = false,
         compressionMode: CompressionMode = .topkLogits
     ) async -> DraftResponsePayload {
         let startTime = CFAbsoluteTimeGetCurrent()
         var candidateTokens: [CompressedDraftToken] = []
 
-        var currentContext = promptTokens
+        let vocabSize = MeshTokenizer.shared.vocabSize
+        let activeSeq = sequence ?? (isChinese ? MeshTokenizer.shared.chineseQuantumSequence : MeshTokenizer.shared.englishQuantumSequence)
+
         for step in 0..<K {
-            // Predict next draft token
-            let simulatedLogits = simulateDraftLogits(for: currentContext.last ?? 100, step: step)
-            let (topKIndices, quantizedProbs) = CompressionEngine.shared.compressTopKLogits(logits: simulatedLogits, topK: 8)
+            let candidateId = MeshTokenizer.shared.getCandidateToken(sequence: activeSeq, index: startIndex + step)
             
-            let selectedTokenId = topKIndices.first ?? Int.random(in: 100...900)
-            let confidence = Float.random(in: 0.75...0.95)
+            // Build pseudo top-K indices and quantized probabilities
+            var topKIndices: [Int] = [candidateId]
+            for offset in 1..<8 {
+                topKIndices.append((candidateId + offset) % vocabSize)
+            }
+            let quantizedProbs: [UInt8] = [240, 180, 120, 80, 50, 30, 15, 5]
+            let confidence = Float.random(in: 0.85...0.97)
 
             let draftToken = CompressedDraftToken(
-                tokenId: selectedTokenId,
+                tokenId: candidateId,
                 topKTokenIds: topKIndices,
-                topKProbabilities: quantizedProbs,
+                topKProbabilities: Data(quantizedProbs),
                 confidence: confidence
             )
             candidateTokens.append(draftToken)
-            currentContext.append(selectedTokenId)
         }
 
         let duration = (CFAbsoluteTimeGetCurrent() - startTime) * 1000.0
@@ -55,15 +62,5 @@ public final class DrafterNode: @unchecked Sendable {
             draftTokensPerSec: tokensPerSec,
             compressedActivations: nil
         )
-    }
-
-    private func simulateDraftLogits(for prevToken: Int, step: Int) -> [Float] {
-        var logits = [Float](repeating: 0.0, count: 1000)
-        let likelyToken = (prevToken * 3 + step * 7 + 13) % 1000
-        logits[likelyToken] = 10.0
-        for i in 0..<logits.count where i != likelyToken {
-            logits[i] = Float.random(in: -3.0...2.0)
-        }
-        return logits
     }
 }

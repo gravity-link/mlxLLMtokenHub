@@ -117,6 +117,22 @@ struct MLXMeshCLI {
             collector.text += tokenStr
         }
 
+        print("  Generated English text:\n  \"\(collector.text)\"")
+
+        // Chinese test
+        let chineseCollector = TextCollector()
+        print("\n  Testing Chinese prompt: \"请介绍一下iPad Pro M4协同大模型推理\"")
+        _ = await engine.generateStream(
+            prompt: "请介绍一下iPad Pro M4协同大模型推理",
+            maxTokens: 32,
+            temperature: 0.7,
+            wanLatencyMs: 50.0,
+            compressionMode: .topkLogits
+        ) { tokenId, tokenStr in
+            chineseCollector.text += tokenStr
+        }
+        print("  Generated Chinese text:\n  \"\(chineseCollector.text)\"")
+
         print("\n  [Results]")
         print("  • Total Tokens Emitted:       \(metrics.totalTokensGenerated)")
         print("  • Accepted Draft Tokens:      \(metrics.acceptedDraftTokens)")

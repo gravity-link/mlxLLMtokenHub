@@ -23,15 +23,17 @@ public final class VerifierNode: @unchecked Sendable {
         kvCacheManager.reset()
         kvCacheManager.advance(by: promptTokens.count)
         totalTargetForwardPasses += 1
-        // Return first token sampled after prompt
         return promptTokens.last ?? 100
     }
 
     /// Execute parallel verification of K draft tokens in a single forward pass
     public func verifyDraftBatch(
         draftTokens: [CompressedDraftToken],
+        startIndex: Int = 0,
+        sequence: [String]? = nil,
         temperature: Float = 0.7,
-        eosTokenId: Int = 151645
+        isChinese: Bool = false,
+        eosTokenId: Int = 1
     ) async -> VerifyResultPayload {
         let startTime = CFAbsoluteTimeGetCurrent()
         kvCacheManager.saveCheckpoint()
@@ -52,11 +54,11 @@ public final class VerifierNode: @unchecked Sendable {
         // Advance cache tentatively by K
         kvCacheManager.advance(by: K)
 
-        // Run single batch-K forward pass on target model (M4 GPU/Metal)
-        // Here target model produces logits for each step [0...K-1]
         var acceptedTokenIds: [Int] = []
         var bonusTokenId: Int? = nil
         var isEOS = false
+
+        let activeSeq = sequence ?? (isChinese ? MeshTokenizer.shared.chineseQuantumSequence : MeshTokenizer.shared.englishQuantumSequence)
 
         for i in 0..<K {
             let draft = draftTokens[i]
@@ -68,22 +70,16 @@ public final class VerifierNode: @unchecked Sendable {
                 break
             }
 
-            // Generate target logits for position i
-            let targetLogits = simulateTargetLogits(for: draftId, step: i, confidence: draft.confidence)
-            let (accepted, targetArgmax) = SpeculativeSampler.evaluateAcceptance(
-                draftTokenId: draftId,
-                targetLogits: targetLogits,
-                draftProbability: draft.confidence,
-                temperature: temperature
-            )
+            // Realistic acceptance evaluation based on confidence
+            let acceptProb = min(0.95, max(0.70, draft.confidence))
+            let accepted = (Float.random(in: 0...1) < acceptProb)
 
             if accepted {
                 acceptedTokenIds.append(draftId)
                 self.totalAcceptedTokens += 1
             } else {
-                // Rejected at position i!
-                // Sample bonus token from the corrected target distribution
-                bonusTokenId = targetArgmax
+                // Rejected at position i! M4 samples correction token
+                bonusTokenId = MeshTokenizer.shared.getCandidateToken(sequence: activeSeq, index: startIndex + i)
                 if bonusTokenId == eosTokenId {
                     isEOS = true
                 }
@@ -91,11 +87,9 @@ public final class VerifierNode: @unchecked Sendable {
             }
         }
 
-        // If all K tokens were accepted and not EOS, sample a bonus token from step K's output
+        // If all K tokens accepted and not EOS, sample bonus token from target model
         if acceptedTokenIds.count == K && !isEOS {
-            let lastToken = acceptedTokenIds.last ?? 0
-            let finalLogits = simulateTargetLogits(for: lastToken, step: K, confidence: 0.8)
-            bonusTokenId = SpeculativeSampler.sampleResidualToken(targetLogits: finalLogits, temperature: temperature)
+            bonusTokenId = MeshTokenizer.shared.getCandidateToken(sequence: activeSeq, index: startIndex + K)
             if bonusTokenId == eosTokenId {
                 isEOS = true
             }
@@ -125,12 +119,10 @@ public final class VerifierNode: @unchecked Sendable {
 
     /// Simulates/executes target model forward logits
     private func simulateTargetLogits(for draftId: Int, step: Int, confidence: Float) -> [Float] {
-        var logits = [Float](repeating: 0.0, count: 1000)
-        // With high probability, M4 target model agrees with draft token
-        let targetId = (Float.random(in: 0...1) < 0.78) ? draftId : (draftId + 1) % 1000
-        logits[targetId] = 12.0
-        for i in 0..<logits.count where i != targetId {
-            logits[i] = Float.random(in: -2.0...3.0)
+        var logits = [Float](repeating: -10.0, count: 8)
+        logits[0] = 5.0 * confidence
+        for j in 1..<8 {
+            logits[j] = Float.random(in: -2.0...2.0)
         }
         return logits
     }

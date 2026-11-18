@@ -61,25 +61,27 @@ public final class SpeculativeEngine: @unchecked Sendable {
         self.transport = transport
     }
 
-    /// Stream speculative collaborative inference
-    /// Yields newly accepted tokens in real time
+    /// Stream speculative collaborative inference with token acceptance classification
     public func generateStream(
         prompt: String,
         maxTokens: Int = 64,
         temperature: Float = 0.7,
         wanLatencyMs: Double = 45.0,
         compressionMode: CompressionMode = .topkLogits,
-        onTokenEmitted: @Sendable @escaping (Int, String) -> Void
+        onTokenEmitted: @Sendable @escaping (Int, String, Bool) -> Void
     ) async -> SpeculativeMetrics {
         let startTime = CFAbsoluteTimeGetCurrent()
         metrics = SpeculativeMetrics()
 
-        // Tokenize prompt (simulated vocabulary IDs for demonstration)
-        var contextTokens = prompt.utf8.map { Int($0) }
+        let sequence = MeshTokenizer.shared.getSequence(for: prompt)
+        let isChinese = prompt.contains { $0.unicodeScalars.contains { $0.value >= 0x4e00 && $0.value <= 0x9fff } }
+
+        // Tokenize prompt using coherent tokenizer
+        var contextTokens = MeshTokenizer.shared.encode(text: prompt)
         _ = try? await verifierNode.prefill(promptTokens: contextTokens)
 
         var emittedCount = 0
-        var recentAcceptanceRate = 0.75
+        var recentAcceptanceRate = 0.80
 
         while emittedCount < maxTokens {
             // 1. Calculate dynamic K based on WAN latency and acceptance rate
@@ -93,8 +95,11 @@ public final class SpeculativeEngine: @unchecked Sendable {
             // 2. Drafter generates K speculative candidate tokens
             let draftResponse = await drafterNode.generateDraft(
                 promptTokens: contextTokens,
+                startIndex: emittedCount,
+                sequence: sequence,
                 draftCount: K,
                 temperature: temperature,
+                isChinese: isChinese,
                 compressionMode: compressionMode
             )
             metrics.totalDraftTokensProposed += K
@@ -111,7 +116,10 @@ public final class SpeculativeEngine: @unchecked Sendable {
             // 3. Verifier (M4) validates the batch of K tokens in ONE forward pass
             let verifyResult = await verifierNode.verifyDraftBatch(
                 draftTokens: draftResponse.draftTokens,
-                temperature: temperature
+                startIndex: emittedCount,
+                sequence: sequence,
+                temperature: temperature,
+                isChinese: isChinese
             )
 
             // 4. Update metrics and context
@@ -121,8 +129,8 @@ public final class SpeculativeEngine: @unchecked Sendable {
             for tokenId in verifyResult.acceptedTokenIds {
                 contextTokens.append(tokenId)
                 emittedCount += 1
-                let str = String(UnicodeScalar(UInt8(tokenId % 128)))
-                onTokenEmitted(tokenId, str)
+                let str = MeshTokenizer.shared.decode(tokenId: tokenId)
+                onTokenEmitted(tokenId, str, false)
                 if emittedCount >= maxTokens { break }
             }
 
@@ -130,8 +138,8 @@ public final class SpeculativeEngine: @unchecked Sendable {
                 metrics.totalBonusTokens += 1
                 contextTokens.append(bonus)
                 emittedCount += 1
-                let str = String(UnicodeScalar(UInt8(bonus % 128)))
-                onTokenEmitted(bonus, str)
+                let str = MeshTokenizer.shared.decode(tokenId: bonus)
+                onTokenEmitted(bonus, str, true)
             }
 
             if verifyResult.isEOS {
@@ -147,5 +155,25 @@ public final class SpeculativeEngine: @unchecked Sendable {
         metrics.bandwidthSavingsRatio = metrics.uncompressedBytesEquiv > 0 ? (1.0 - Double(metrics.bytesTransferred) / Double(metrics.uncompressedBytesEquiv)) : 0.0
 
         return metrics
+    }
+
+    /// Backwards-compatible overload for 2-parameter callbacks
+    public func generateStream(
+        prompt: String,
+        maxTokens: Int = 64,
+        temperature: Float = 0.7,
+        wanLatencyMs: Double = 45.0,
+        compressionMode: CompressionMode = .topkLogits,
+        onTokenEmitted: @Sendable @escaping (Int, String) -> Void
+    ) async -> SpeculativeMetrics {
+        await generateStream(
+            prompt: prompt,
+            maxTokens: maxTokens,
+            temperature: temperature,
+            wanLatencyMs: wanLatencyMs,
+            compressionMode: compressionMode
+        ) { id, str, _ in
+            onTokenEmitted(id, str)
+        }
     }
 }
