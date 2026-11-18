@@ -44,6 +44,68 @@ public struct SettingsView: View {
                     }
                 }
 
+                Section(header: Text("Model Deployment & Weights (模型部署与权重)")) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack {
+                            Text("Compute Role:")
+                            Spacer()
+                            Text(coordinator.activeRole == .verifier ? "Verifier (Target Model)" : "Drafter (Draft Model)")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(coordinator.activeRole == .verifier ? .purple : .blue)
+                        }
+
+                        HStack {
+                            Text("Draft Model (0.5B):")
+                            Spacer()
+                            Text(coordinator.activeDraftModel.split(separator: "/").last ?? "Qwen2.5-0.5B")
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundColor(.secondary)
+                        }
+
+                        HStack {
+                            Text("Target Model (7B):")
+                            Spacer()
+                            Text(coordinator.activeTargetModel.split(separator: "/").last ?? "Qwen2.5-7B")
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundColor(.secondary)
+                        }
+
+                        Divider()
+
+                        if coordinator.isDownloading {
+                            VStack(alignment: .leading, spacing: 4) {
+                                ProgressView(value: coordinator.downloadProgress)
+                                    .progressViewStyle(.linear)
+                                Text("Deploying model weights... \(Int(coordinator.downloadProgress * 100))%")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                        } else {
+                            HStack {
+                                Button(action: {
+                                    Task {
+                                        await coordinator.deploySmallModel("mlx-community/Qwen2.5-0.5B-Instruct-4bit")
+                                    }
+                                }) {
+                                    Label("Deploy Small Model (Qwen2.5-0.5B)", systemImage: "arrow.down.circle.fill")
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .tint(.purple)
+
+                                Spacer()
+
+                                if coordinator.isModelLoaded {
+                                    Text("Ready")
+                                        .font(.caption)
+                                        .foregroundColor(.green)
+                                        .fontWeight(.semibold)
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Section(header: Text("libp2p-quic Bootstrap & Relay")) {
                     TextField("Bootstrap Multiaddress", text: $coordinator.bootstrapAddress)
                         .font(.system(.footnote, design: .monospaced))

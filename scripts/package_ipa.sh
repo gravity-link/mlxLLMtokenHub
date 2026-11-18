@@ -231,18 +231,32 @@ codesign -s - --force --deep --preserve-metadata=identifier,flags,runtime --enti
 # 6. Assemble .ipa Zip Archives
 echo "[6/6] Packaging into .ipa archives..."
 cd "$DIST_DIR"
-rm -f "$DIST_DIR/mlxLLM-sideload.ipa" "$DIST_DIR/mlxLLM.ipa"
+rm -f "$DIST_DIR/mlxLLM-sideload.ipa" "$DIST_DIR/mlxLLM.ipa" "$DIST_DIR/mlxLLM-temporary-sideload.ipa"
 zip -qry "$DIST_DIR/mlxLLM.ipa" Payload
 cp "$DIST_DIR/mlxLLM.ipa" "$DIST_DIR/mlxLLM-sideload.ipa"
+cp "$DIST_DIR/mlxLLM.ipa" "$DIST_DIR/mlxLLM-temporary-sideload.ipa"
+
+# Also package developer-signed iPadM4 IPA if profile exists
+DEV_PROFILE="/Users/henryluo/Library/Developer/Xcode/UserData/Provisioning Profiles/450bb77b-b566-4653-8d97-2b5fb3b4c71b.mobileprovision"
+if [ -f "$DEV_PROFILE" ]; then
+    echo "• Packaging developer-signed iPadM4 package..."
+    /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier com.webrtc.subscriber" "$TEMP_APP_DIR/Info.plist" 2>/dev/null || true
+    cp "$DEV_PROFILE" "$TEMP_APP_DIR/embedded.mobileprovision"
+    codesign -s "Apple Development: Hongyu Luo (32VR253K2K)" -f --entitlements "$DIST_DIR/real_entitlements.plist" "$TEMP_APP_DIR" 2>/dev/null || true
+    rm -f "$DIST_DIR/mlxLLM-iPadM4.ipa"
+    zip -qry "$DIST_DIR/mlxLLM-iPadM4.ipa" Payload
+fi
 
 IPA_SIZE=$(du -h "$DIST_DIR/mlxLLM.ipa" | cut -f1)
 
 echo "=================================================="
 echo "  Build & Sideload Package Created Successfully!   "
 echo "=================================================="
-echo "• Output IPA:    $DIST_DIR/mlxLLM.ipa ($IPA_SIZE)"
-echo "• Sideload IPA:  $DIST_DIR/mlxLLM-sideload.ipa"
-echo "• Raw App:       $TEMP_APP_DIR"
+echo "• Output IPA:        $DIST_DIR/mlxLLM.ipa ($IPA_SIZE)"
+echo "• Sideload IPA:      $DIST_DIR/mlxLLM-sideload.ipa"
+echo "• Temp Sideload IPA: $DIST_DIR/mlxLLM-temporary-sideload.ipa"
+echo "• iPad M4 Direct:    $DIST_DIR/mlxLLM-iPadM4.ipa"
+echo "• Raw App:           $TEMP_APP_DIR"
 echo ""
 echo "支持的签名与安装方式："
 echo "1. 【Sideloadly / AltStore / SideStore / 牛蛙助手】"

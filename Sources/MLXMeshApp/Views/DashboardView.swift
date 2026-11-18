@@ -91,6 +91,20 @@ public struct DashboardView: View {
                     Text("\(Int(coordinator.deviceProfile.computeScore))").font(.headline)
                 }
             }
+
+            Divider()
+
+            HStack {
+                Text("Active Model:").font(.caption).foregroundColor(.secondary)
+                Text(coordinator.activeRole == .verifier ? coordinator.activeTargetModel : coordinator.activeDraftModel)
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundColor(.purple)
+                Spacer()
+                Text(coordinator.isModelLoaded ? "Deployed" : "Ready")
+                    .font(.caption2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.green)
+            }
         }
         .padding()
         .background(Color.gray.opacity(0.12))
