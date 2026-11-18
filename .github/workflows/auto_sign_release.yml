@@ -1,0 +1,91 @@
+name: Scheduled Build & Sideload Auto-Sign
+
+on:
+  schedule:
+    # Auto-run every 5 days at 00:00 UTC (to refresh 7-day sideload certificates before expiry)
+    - cron: '0 0 */5 * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-sign:
+    name: Build & Re-sign mlxLLM IPA
+    runs-on: macos-14
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Verify Environment
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-path
+          swift --version
+
+      - name: Build and Package Base IPA
+        run: |
+          chmod +x scripts/package_ipa.sh
+          ./scripts/package_ipa.sh
+
+      - name: Sign IPA via GitHub Secrets (Optional Production/Enterprise Signing)
+        if: env.P12_BASE64 != '' && env.MOBILEPROVISION_BASE64 != ''
+        env:
+          P12_BASE64: ${{ secrets.P12_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          MOBILEPROVISION_BASE64: ${{ secrets.MOBILEPROVISION_BASE64 }}
+        run: |
+          echo "Decoding signing credentials..."
+          echo "$P12_BASE64" | base64 --decode > /tmp/cert.p12
+          echo "$MOBILEPROVISION_BASE64" | base64 --decode > /tmp/profile.mobileprovision
+          
+          # Install zsign for lightning-fast cross-platform IPA signing
+          brew install zsign 2>/dev/null || (git clone https://github.com/zhlynn/zsign.git /tmp/zsign && cd /tmp/zsign && g++ *.cpp -lcrypto -o /usr/local/bin/zsign)
+          
+          zsign -k /tmp/cert.p12 -p "$P12_PASSWORD" -m /tmp/profile.mobileprovision -o dist/mlxLLM-workflow-signed.ipa dist/mlxLLM-temporary-sideload.ipa
+          echo "Successfully created dist/mlxLLM-workflow-signed.ipa"
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlxLLM-IPA-Packages
+          path: |
+            dist/*.ipa
+            dist/Entitlements.plist
+
+      - name: Create or Update GitHub Release
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-sideload
+          name: "mlxLLM Continuous Sideload Release"
+          body: |
+            ### mlxLLM Automated Sideload & Speculative Network Build
+            
+            - **Commit**: `${{ github.sha }}`
+            - **Build Date**: `${{ github.event.head_commit.timestamp || 'Automated Cron' }}`
+            
+            #### Included Packages:
+            - **`mlxLLM-temporary-sideload.ipa`**: Ad-hoc/Fake-signed package, ready for 1-click import into Sideloadly, AltStore, SideStore, or TrollStore.
+            - **`mlxLLM-iPadM4.ipa`**: iPad Pro (M4) pre-configured package with `increased-memory-limit` (16GB unified RAM).
+            - **`mlxLLM.ipa`**: Standard application package.
+            
+            #### Sideload Instructions:
+            1. Drag `mlxLLM-temporary-sideload.ipa` into Sideloadly or AltStore.
+            2. Enter your Apple ID to sign and install on your iPad Pro M4.
+          files: |
+            dist/mlxLLM-temporary-sideload.ipa
+            dist/mlxLLM-iPadM4.ipa
+            dist/mlxLLM.ipa
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
